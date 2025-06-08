@@ -1,19 +1,9 @@
 class Solution:
     def climbStairs(self, n: int) -> int:
-        memo = {}
-        def dfa(curr):
-            if curr == n:
-                return 1
-            if curr > n:
-                return 0
-            if curr in memo:
-                return memo[curr]
-            memo[curr] = dfa(curr + 1) + dfa(curr + 2)
-            return memo[curr]
-        return dfa(0)
         
-             
+        prev1, prev2 = 1, 2
 
+        for i in range(2, n+1):
+            prev1, prev2 = prev2, prev1 + prev2
 
-            
-        
+        return prev1
