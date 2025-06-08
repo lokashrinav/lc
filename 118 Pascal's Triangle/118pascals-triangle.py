@@ -1,20 +1,23 @@
 class Solution:
     def generate(self, numRows: int) -> List[List[int]]:
-        # [1]
-        # [1, 1]
-        # [1, 2, 1]
-        # [0, 0, 0, 0, 0]
-        dp = [0, 1, 0]
+        
+        final = []
+        if numRows == 1:
+            return [[1]]
 
-        final = [[1]]
+        curr = [1, 1]
+        final.append([1])
+        final.append(curr)
 
-        for i in range(numRows - 1):
-            dp2 = []
-            for p in range(1, len(dp)):
-                dp2.append(dp[p] + dp[p - 1])
-            final.append(dp2.copy())
-            dp2.append(0)
-            dp2 = [0] + dp2
-            dp = dp2
+        for i in range(2, numRows):
+            res = []
+            res.append(curr[0])
+            for i in range(len(curr) - 1):
+                res.append(curr[i] + curr[i + 1])
+
+            res.append(curr[0])
+            final.append(res)
+            curr = res
+
         return final
         
