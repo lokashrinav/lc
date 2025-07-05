@@ -1,16 +1,10 @@
 class Solution:
     def findLucky(self, arr: List[int]) -> int:
+        hmap = Counter(arr)
+        res = []
+        for elem in arr:
+            if elem == hmap[elem]:
+                res.append(elem)
 
-        hmap = {}
-        for i in arr:
-            hmap[i] = hmap.get(i, 0) + 1
-        
-        maxKey = -1
-        for key, val in hmap.items():
-            if key == val:
-                maxKey = max(val, maxKey)
-        
-        return maxKey
-        
-
+        return max(res) if res else -1
         
