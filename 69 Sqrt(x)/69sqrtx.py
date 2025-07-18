@@ -1,19 +1,16 @@
 class Solution:
     def mySqrt(self, x: int) -> int:
+
         l, r = 0, x
+        saved = 0
+
         while l <= r:
             m = (l + r) // 2
-            print(m)
-            if m * m == x:
-                return m
-            if m * m > x and (m - 1) * (m - 1) < x:
-                return m - 1
-            if m * m > x:
-                r = m - 1
-            elif m * m < x:
+            if m * m <= x:
+                saved = max(m, saved)
                 l = m + 1
+            else:
+                r = m - 1
 
-        return m
-        
-
+        return saved
         
