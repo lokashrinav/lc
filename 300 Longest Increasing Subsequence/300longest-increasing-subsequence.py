@@ -1,37 +1,20 @@
 class Solution:
     def lengthOfLIS(self, nums: List[int]) -> int:
+        '''
 
-        def binarySearch(num, stack):
-            l, r = 0, len(stack) - 1
-            while l < r:
-                m = (l + r) // 2
-                if(stack[m] >= num):
-                    if m > 0 and stack[m - 1] < num:
-                        return m
-                    elif m == 0:
-                        return m
-                    else:
-                        r = m - 1
-                else:
-                    l = m + 1
-            return (l + r) // 2
+        []
 
-        stack = []
+        '''
+
+        dp = [1] * len(nums)
+
         for i in range(len(nums)):
-            if not stack:
-                stack.append(nums[i])
-            else:
-                if stack[-1] < nums[i]:
-                    stack.append(nums[i])
-                else:
-                    replaceIndex = binarySearch(nums[i], stack)
-                    stack[replaceIndex] = nums[i]
-
-        return len(stack)
-
-
-
-
-
-
+            maxNum = 1
+            for p in range(i - 1, -1, -1):
+                if nums[i] > nums[p]:
+                    maxNum = max(1 + dp[p], maxNum)
+            dp[i] = maxNum
         
+        print(dp)
+
+        return max(dp)
