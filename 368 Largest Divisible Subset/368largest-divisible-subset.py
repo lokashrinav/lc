@@ -1,26 +1,54 @@
 class Solution:
     def largestDivisibleSubset(self, nums: List[int]) -> List[int]:
-        nums.sort()
-        arr = [0] * len(nums)
-        arr2 = [[] for i in range(len(nums))]
+        '''
 
+        answer[i] % answer[j] == 0 - if i first, True, else False
+        answer[j] % answer[i] == 0 - 
+
+        3, 18, 12, 2, 6
+
+        18 -> 6, 3, 2
+        12 -> 6, 3, 2   
+        '''
+
+        paths = defaultdict(list)
         for i in range(len(nums)):
-            arr[i] = nums[i]
-            arr2[i] = [nums[i]]
-            for p in range(i):
-                if nums[i] % arr[p] == 0 and 1 + len(arr2[p]) > len(arr2[i]):
-                    arr[i] = lcm(nums[i], arr[p])
-                    arr2[i] = [nums[i]] + arr2[p]
-        print(arr)
-        print(arr2)
-        
-        curr = []
+            for p in range(i - 1, -1, -1):
+                if nums[i] % nums[p] == 0:
+                    paths[nums[i]].append(nums[p])
+                elif nums[p] % nums[i] == 0:                
+                    paths[nums[p]].append(nums[i])
+
+        visited = {}
+
+        def dfs(num):
+            if num in visited:
+                return visited[num]
+                
+            maxNum = 0
+            saved = []
+
+            for elem in paths[num]:
+                calc = dfs(elem)
+                if calc[0] > maxNum:
+                    maxNum = calc[0]
+                    saved = calc[1].copy()
+
+            saved.append(num)
+
+            visited[num] = (1 + maxNum, saved.copy())
+
+            return visited[num]  
+                  
+        maxNum = 0
+        saved = []
         for i in range(len(nums)):
-            if len(arr2[i]) > len(curr):
-                curr = arr2[i]
+            calc = dfs(nums[i])
+            if calc[0] > maxNum:
+                maxNum = calc[0]
+                saved = calc[1]
         
-        return curr
+        print(paths, visited)
+        print(maxNum, saved)
 
-
-            
-                            
+        return saved
