@@ -1,9 +1,3 @@
-class ListNode:
-    def __init__(self, val, next=None, prev=None):
-        self.val = val
-        self.next = next
-        self.prev = prev
-
 class FrontMiddleBackQueue:
 
     def __init__(self):
@@ -12,55 +6,50 @@ class FrontMiddleBackQueue:
 
     def pushFront(self, val: int) -> None:
         self.queue1.appendleft(val)
-        if len(self.queue1) > len(self.queue2) + 1:
-            out = self.queue1.pop()
-            self.queue2.appendleft(out)
+        if len(self.queue1) - len(self.queue2) >= 2:
+            self.queue2.appendleft(self.queue1.pop())
         print(self.queue1, self.queue2)
 
     def pushMiddle(self, val: int) -> None:
-        if len(self.queue1) + 1 > len(self.queue2) + 1:
-            out = self.queue1.pop()
-            self.queue2.appendleft(out)
-        self.queue1.append(val)
-        #print(self.queue1, self.queue2)
+        if len(self.queue1) > len(self.queue2):
+            self.queue2.appendleft(self.queue1.pop())   
+            self.queue1.append(val)
+        else:
+            self.queue1.append(val)
 
     def pushBack(self, val: int) -> None:
         self.queue2.append(val)
-        if len(self.queue1) < len(self.queue2):
-            out = self.queue2.popleft()
-            self.queue1.append(out)
-        #print(self.queue1, self.queue2)
+        if len(self.queue2) - len(self.queue1) >= 1:
+            self.queue1.append(self.queue2.popleft())
+        print(self.queue1, self.queue2)
 
     def popFront(self) -> int:
         if not self.queue1:
             return -1
-        put = self.queue1.popleft()
-        if len(self.queue1) < len(self.queue2):
-            out = self.queue2.popleft()
-            self.queue1.append(out)
-        #print(self.queue1, self.queue2)
-        return put
+        out = self.queue1.popleft()  
+        if len(self.queue2) - len(self.queue1) >= 1:
+            self.queue1.append(self.queue2.popleft())
+        print(self.queue1, self.queue2)
+        return out
 
     def popMiddle(self) -> int:
         if not self.queue1:
             return -1
-        put = self.queue1.pop()
-        if len(self.queue1) < len(self.queue2):
-            out = self.queue2.popleft()
-            self.queue1.append(out)
-        #print(self.queue1, self.queue2)
-        return put
+        out = self.queue1.pop()
+        if len(self.queue2) - len(self.queue1) >= 1:
+            self.queue1.append(self.queue2.popleft())
+        print(self.queue1, self.queue2)
+        return out
 
     def popBack(self) -> int:
-        if not self.queue1 and not self.queue2:
+        if not self.queue1:
             return -1
-        if not self.queue2:
-            return self.queue1.pop()
-        put = self.queue2.pop()
-        if len(self.queue1) > len(self.queue2) + 1:
-            out = self.queue1.pop()
-            self.queue2.appendleft(out)
-        return put
+        out = self.queue2.pop() if self.queue2 else self.queue1.pop()
+        if len(self.queue1) - len(self.queue2) >= 2:
+            self.queue2.appendleft(self.queue1.pop())   
+        print(self.queue1, self.queue2)
+        return out
+
 
 # Your FrontMiddleBackQueue object will be instantiated and called as such:
 # obj = FrontMiddleBackQueue()
