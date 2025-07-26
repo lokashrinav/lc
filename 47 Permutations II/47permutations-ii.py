@@ -1,25 +1,26 @@
-import itertools
 class Solution:
     def permuteUnique(self, nums: List[int]) -> List[List[int]]:
-        counter_list = Counter(nums)
+        res = []
+        curr = []
+        arr = [True] * len(nums)
+        nums.sort()
 
-        def dfs(hmap):
-            if len(hmap) == 0:
-                return [[]]
+        def dfs(curr):
+            if len(curr) == len(nums):
+                res.append(curr.copy())
+                return 
             
-            permutations = []
+            for i in range(len(nums)):
+                if i >= 1 and nums[i] == nums[i - 1] and arr[i - 1]:
+                    continue
 
-            for key, val in list(hmap.items()):
-                current = key
-                hmap[key] -= 1
-                if val == 1:
-                    del hmap[key]
-                for p in dfs(hmap):
-                    permutations.append([key] + p)
-                hmap[key] = hmap.get(key, 0) + 1
+                if arr[i]:
+                    curr.append(nums[i])
+                    arr[i] = False
+                    dfs(curr)
+                    arr[i] = True
+                    curr.pop()
+        
+        dfs(curr)
 
-            return permutations
-        
-        return dfs(counter_list)
-        
-        
+        return res
