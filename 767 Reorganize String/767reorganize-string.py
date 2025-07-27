@@ -1,48 +1,33 @@
 class Solution:
     def reorganizeString(self, s: str) -> str:
-        count = Counter(s)
-        maxHeap = []
-
-        '''
-        a b
-
-        a b a a
-
-        a b a
-
-        if odd: max is allowed to be 1 + len(res) // 2
-        if even: max is allowed to be 
-
-        '''
-
-        for key, val in count.items():
-            if len(s) % 2 == 0 and val > len(s) // 2:
-                return ""
-            elif len(s) % 2 and val - 1 > len(s) // 2:
-                return ""
-            
-            maxHeap.append((-val, key))
-        
+        hmap = Counter(s)
+        maxHeap = [(-x, y) for y, x in hmap.items()]
         heapify(maxHeap)
-        res = ""
 
+        res = []
         while maxHeap:
-            out1, val1 = heappop(maxHeap)
-            if maxHeap:
-                out2, val2 = heappop(maxHeap)
-            else:
-                out2 = -1
-                val2 = ""
+            if res and len(maxHeap) == 1 and maxHeap[0] == res[-1]:
+                return ""
+            if len(maxHeap) == 1:
+                x, y = heappop(maxHeap)
+                res.append(y)
+                if x != -1:
+                    return ""
+                break                                        
 
-            res += (val1 + val2)
+            x1, y1 = heappop(maxHeap)
+            x2, y2 = heappop(maxHeap)
 
-            if out1 + 1 < 0:
-                heappush(maxHeap, (out1 + 1, val1))
-            if out2 + 1 < 0:
-                heappush(maxHeap, (out2 + 1, val2))
+            res.append(y1)
+            res.append(y2)
+
+            if x1 != -1:
+                heappush(maxHeap, (x1 + 1, y1))
+            if x2 != -1:
+                heappush(maxHeap, (x2 + 1, y2))
         
-        return res
-
+        for i in range(1, len(res)):
+            if res[i] == res[i - 1]:
+                return ""
         
-
-        
+        return ''.join(res)
