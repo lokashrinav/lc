@@ -10,20 +10,27 @@ class Node:
 
 class Solution:
     def connect(self, root: 'Optional[Node]') -> 'Optional[Node]':
-        queue = deque()
-        queue.append(root)
         
-        while queue:
+        curr = root
+        prev = None
+        while curr:
+            next1 = curr
             prev = None
-            for i in range(len(queue)):
-                out = queue.popleft()
-                if not out:
-                    continue
-                queue.append(out.right)
-                queue.append(out.left)
-                if i == len(queue):
-                    out.next = None
-                else:
-                    out.next = prev
-                prev = out
+            while next1:
+
+                if not next1.left:
+                    break
+
+                if prev:
+                    prev.next = next1.left
+                
+                next1.left.next = next1.right
+
+                prev = next1.right
+
+                next1 = next1.next
+
+            curr = curr.left
+        
         return root
+        
