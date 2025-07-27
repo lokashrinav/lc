@@ -3,28 +3,41 @@ class Solution:
         if n == 1:
             return [0]
         
-        adj = defaultdict(set)
+        paths = defaultdict(set)
         for y, x in edges:
-            adj[y].add(x)
-            adj[x].add(y)
+            paths[y].add(x)
+            paths[x].add(y)
 
         queue = deque()
-        for i in range(n):
-            if len(adj[i]) == 1:
-                queue.append(i)
+        visited = set()
 
-        remaining = n
+        # Find initial leaves (keep your approach)
+        for elem in paths:
+            if len(paths[elem]) == 1:
+                visited.add(elem)
+                queue.append(elem)
+        
+        # Keep your while loop structure
+        while queue:
+            if len(visited) == n:
+                return list(queue)
 
-        depth = 0
-        while remaining > 2:
-            remaining -= len(queue)
-            depth += 1
+            next_queue = deque()
+            
+            # Keep your for loop structure  
             for i in range(len(queue)):
                 out = queue.popleft()
-
-                for nei in adj[out]:
-                    adj[nei].remove(out)
-                    if len(adj[nei]) == 1:
-                        queue.append(nei)
+                
+                # Fix: actually remove the leaf
+                for elem in list(paths[out]):
+                    paths[elem].remove(out)
+                    if elem not in visited and len(paths[elem]) == 1:
+                        visited.add(elem)
+                        next_queue.append(elem)
+                
+                # Remove the processed leaf
+                del paths[out]
+            
+            queue = next_queue
         
-        return list(queue)
+        return []
