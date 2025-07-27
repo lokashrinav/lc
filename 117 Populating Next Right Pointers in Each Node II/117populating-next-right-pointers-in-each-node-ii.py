@@ -10,21 +10,36 @@ class Node:
 
 class Solution:
     def connect(self, root: 'Node') -> 'Node':
-        queue = deque()
-        queue.append(root)
-        
-        while queue:
+
+        curr = root
+        while curr:
+            next1 = curr
             prev = None
-            for i in range(len(queue)):
-                out = queue.popleft()
-                if not out:
-                    continue
-                queue.append(out.right)
-                queue.append(out.left)
-                if i == len(queue):
-                    out.next = None
-                else:
-                    out.next = prev
-                prev = out
+            first = None
+            while next1:    
+                print(curr.val, next1.val)
+                if next1.left and next1.right:
+                    if not first:
+                        first = next1.left
+                    if prev:
+                        prev.next = next1.left
+                    next1.left.next = next1.right
+                    prev = next1.right
+                elif next1.left:
+                    if not first:
+                        first = next1.left
+                    if prev:
+                        prev.next = next1.left
+                    prev = next1.left
+                elif next1.right:
+                    if not first:
+                        first = next1.right
+                    if prev:
+                        prev.next = next1.right
+                    prev = next1.right
+                next1 = next1.next
+                
+            curr = first
+
         return root
         
