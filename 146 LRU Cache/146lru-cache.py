@@ -1,9 +1,9 @@
 class Node:
     def __init__(self, key, val):
-        self.val = val
-        self.key = key
         self.next = None
         self.prev = None
+        self.key = key
+        self.val = val
 
 class LRUCache:
 
@@ -12,67 +12,85 @@ class LRUCache:
         self.hmap = {}
         self.head = None
         self.tail = None
+        self.curr_cap = 0
     
-    def printNodes(self, node):
-        while node:
-            print(node.key, node.val, end=" ")
-            node = node.next
-        print("ffun")        
-            
-    def get(self, key: int) -> int:
-        #self.printNodes(self.head)
+    def printNode(self, node):
+        print(None if not self.head else self.head.key, None if not self.tail else self.tail.key)
 
-        if key in self.hmap:
-            newNode = self.hmap[key]
-            if self.head == self.tail:
-                return self.hmap[key].val
-            elif newNode == self.head:
-                self.head = self.head.next
-                self.head.prev = None
-                self.tail.next = newNode
-                newNode.prev = self.tail
-                self.tail = self.tail.next
-                return self.hmap[key].val
-            elif newNode == self.tail:
-                return self.hmap[key].val
-            else:
-                newNode.prev.next = newNode.next
-                newNode.next.prev = newNode.prev
-                self.tail.next = newNode
-                newNode.prev = self.tail
-                self.tail = self.tail.next
-            return self.hmap[key].val
-        else:
+        while node:
+            print(node.key, node.val)
+            node = node.next
+        print(" ")
+
+    def printNode2(self, node):
+        print(None if not self.head else self.head.key, None if not self.tail else self.tail.key)
+
+        while node:
+            print(node.key, node.val)
+            node = node.prev
+        print(" ")
+
+    def get(self, key: int) -> int:
+        if key not in self.hmap:
             return -1
         
-    def put(self, key: int, value: int) -> None:
+        if key == self.head.key:
+            return self.head.val
 
-        if not self.head:
-            newNode = Node(key, value)
-            self.hmap[key] = newNode
-            self.head = self.tail = newNode
-        else:
-            if key in self.hmap:
-                self.hmap[key].val = value
-                self.get(key)
-            else:
-                newNode = Node(key, value)
-                self.hmap[key] = newNode
-                self.tail.next = newNode
-                newNode.prev = self.tail
-                self.tail = self.tail.next
-
-            if len(self.hmap.keys()) > self.cap:
-                self.head.next.prev = None
-                del self.hmap[self.head.key]
-                self.head = self.head.next
-        
-        #self.printNodes(self.head)
-        
+        #self.printNode2(self.tail)
             
+        curr = self.hmap[key]
+        out = curr.val
 
+        if curr.prev:
+            curr.prev.next = curr.next
 
+        if curr.next:
+            curr.next.prev = curr.prev
+
+        if self.tail != self.head:
+            if self.head != curr:
+                curr.next = self.head
+                self.head.prev = curr
+            if curr == self.tail:
+                self.tail = curr.prev
+                
+
+        curr.prev = None
+        self.head = curr
+
+        return out
+
+    def put(self, key: int, value: int) -> None:
+        #self.printNode2(self.tail)
+
+        if key not in self.hmap:
+            if self.curr_cap == self.cap:
+                if self.head == self.tail:
+                    self.head = None
+
+                if self.tail.prev:
+                    self.tail.prev.next = None
+                del self.hmap[self.tail.key]
+                self.tail = self.tail.prev
+                self.curr_cap -= 1
+
+            curr = self.hmap[key] = Node(key, value)
+            curr.next = self.head
+
+            if self.head:
+                self.head.prev = curr
+                
+            if not self.head:
+                self.tail = curr
+
+            self.head = curr
+            self.curr_cap += 1
+        else:
+            self.hmap[key].val = value
+            self.get(key)
         
+
 
 
 # Your LRUCache object will be instantiated and called as such:
