@@ -1,28 +1,25 @@
 class Solution:
     def countSubstrings(self, s: str) -> int:
-
-        num = 0
-        for i in range(len(s)):
-            start = i
-            end = i
-            while start >= 0 and end < len(s) and s[start] == s[end]:
-                length = end - start + 1
-                num += 1
-                start -= 1
-                end += 1
-
-        for i in range(len(s)):
-            start = i
-            end = i + 1
-            while start >= 0 and end < len(s) and s[start] == s[end]:
-                length = end - start + 1
-                num += 1
-                start -= 1
-                end += 1
-        return num
-            
-
-
-
-
         
+        total = len(s)
+        for i in range(len(s)):
+            p = 1
+            while i - p >= 0 and i + p < len(s):
+                if s[i - p] == s[i + p]:
+                    total += 1
+                else:
+                    break
+                p += 1
+                
+            p = 1
+            while i - p >= 0 and i + p - 1 < len(s):
+                if s[i - p] == s[i + p - 1]:
+                    total += 1
+                else:
+                    break
+                p += 1
+        
+        return total
+            
+                
+         
