@@ -1,24 +1,17 @@
 class Solution:
     def maxProfit(self, prices: List[int], fee: int) -> int:
+        '''
+
+        dp[i][0] = max(dp[i + 1][1] + prices[i] - fee, dp[i + 1][0])
+        dp[i][1] = max(-prices[i] + dp[i + 1][0] - fee, dp[i + 1][1])
+
+        '''
+
+        dp = [[0, 0] for i in range(len(prices) + 1)]
+        for i in range(len(prices) - 1, -1, -1):
+            dp[i][0] = max(dp[i + 1][1] + prices[i], dp[i + 1][0])
+            dp[i][1] = max(-prices[i] + dp[i + 1][0] - fee, dp[i + 1][1])
         
-        memo = {}
-        def dfs(ind, buy):
-            if ind >= len(prices):
-                return 0
+        print(dp)
 
-            if (ind, buy) in memo:
-                return memo[(ind, buy)]
-
-            if buy:
-                total = -prices[ind] + -fee + dfs(ind + 1, False)
-            else:
-                total = prices[ind] + dfs(ind + 1, True)
-            
-            total = max(total, dfs(ind + 1, buy))
-
-            memo[(ind, buy)] = total
-
-            return total
-        
-        return dfs(0, True)
-        
+        return dp[0][1]
