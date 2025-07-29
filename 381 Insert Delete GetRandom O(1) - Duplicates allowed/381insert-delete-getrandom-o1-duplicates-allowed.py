@@ -1,39 +1,33 @@
 class RandomizedCollection:
-
     def __init__(self):
-        self.hmap = {}
-        self.lis = []
-        
+        self.arr = []                    # stores all elements
+        self.indices = defaultdict(set)  # val -> set of indices in arr
+    
     def insert(self, val: int) -> bool:
-        self.lis.append(val)
-        if val in self.hmap.keys():
-            self.hmap[val].append(len(self.lis) - 1)
-            return False
-        else:
-            self.hmap[val] = [len(self.lis) - 1]
-        return True
-
+        was_empty = not self.indices[val]
+        self.arr.append(val)
+        self.indices[val].add(len(self.arr) - 1)
+        return was_empty
+    
     def remove(self, val: int) -> bool:
-        if val not in self.hmap.keys():
+        if not self.indices[val]:
             return False
-        saved = self.lis[-1]
-        saved2 = self.hmap[val][-1]
-        self.lis[saved2], self.lis[-1] = self.lis[-1], self.lis[saved2] 
-        self.hmap[saved].remove(len(self.lis) - 1)
-        self.lis.pop()
-        self.hmap[saved].append(saved2)
-        self.hmap[val].pop()
-        if self.hmap[val] == []:
-            del self.hmap[val]
+        
+        # Get any index where val appears
+        remove_idx = self.indices[val].pop()
+        last_idx = len(self.arr) - 1
+        last_val = self.arr[last_idx]
+        
+        # Replace element at remove_idx with last element
+        self.arr[remove_idx] = last_val
+        
+        # Update indices for the moved element (if it actually moved)
+        if remove_idx != last_idx:
+            self.indices[last_val].add(remove_idx)
+            self.indices[last_val].discard(last_idx)
+        
+        self.arr.pop()
         return True
-        
+    
     def getRandom(self) -> int:
-        return random.choice(self.lis)
-        
-
-
-# Your RandomizedCollection object will be instantiated and called as such:
-# obj = RandomizedCollection()
-# param_1 = obj.insert(val)
-# param_2 = obj.remove(val)
-# param_3 = obj.getRandom()
+        return random.choice(self.arr)
