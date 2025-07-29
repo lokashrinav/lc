@@ -1,34 +1,45 @@
 class Solution:
     def maxPoints(self, points: List[List[int]]) -> int:
+
+        if len(points) <= 1:
+            return 1
+
         
-        final = defaultdict(int)
-        maxNum = 1
+        hmap = defaultdict(set)
         for i in range(len(points)):
-            hmap = defaultdict(lambda: 1)
-            x1, y1 = points[i]
-            # (1, 1)
-            for p in range(i + 1, len(points)):
-                x2, y2 = points[p]
-                check = x2 - x1
-                if check != 0:
-                    slope = (y2 - y1) / (x2 - x1)
+            nx, ny = points[i]
+            for p in range(len(points)):
+                if i == p:
+                    continue
+                dx, dy = points[p]
+                if dx - nx == 0:
+                    hmap[("h", nx)].add(tuple(points[i]))
+                    hmap[("h", nx)].add(tuple(points[p]))
                 else:
-                    slope = float('inf')
-                
-                hmap[slope] += 1
-            
-            for key in hmap.keys():
-                if key in final:
-                    final[key] = max(final[key], hmap[key])
-                else:
-                    final[key] += hmap[key]
-                maxNum = max(final[key], maxNum)
+                    calc1 = (dy - ny) / (dx - nx)
+                    # y = calc1 * x + b
+                    # ny - calc1 * nx = b
+                    hmap[(calc1, ny - calc1 * nx)].add(tuple(points[i]))
+                    hmap[(calc1, ny - calc1 * nx)].add(tuple(points[p]))
         
-        return maxNum 
+        # n * (n + 1) // 2 = y max(hmap.values())
+        # n ** 2 + n = 2 * y = val
+
+        #print(hmap)
+        hmap2 = {}
+
+        maxNum = 0
+        for elem in hmap:
+            maxNum = max(maxNum, len(hmap[elem]))
+            hmap2[elem] = len(hmap[elem])
+        
+        print(hmap2)
+        
+        return maxNum
+
+
+
+
 
 
         
-            
-
-            
-
