@@ -5,36 +5,39 @@
 #         self.next = next
 class Solution:
     def mergeKLists(self, lists: List[Optional[ListNode]]) -> Optional[ListNode]:
+
         if not lists:
             return None
 
-        def merge(node1, node2):
-            dummy = curr = ListNode(0)
-            while node1 and node2:
-                if node1.val < node2.val:
-                    curr.next = node1
-                    node1 = node1.next
+        def merge(list1, list2):
+            head = node = ListNode()
+            while list1 and list2:
+                if list1.val < list2.val:
+                    node.next = list1
+                    list1 = list1.next
                 else:
-                    curr.next = node2
-                    node2 = node2.next
-                curr = curr.next
-
-            if node1:
-                curr.next = node1
+                    node.next = list2
+                    list2 = list2.next
+                node = node.next
             
-            if node2:
-                curr.next = node2
-            
-            return dummy.next
-
+            if list1:
+                node.next = list1
+            if list2:
+                node.next = list2
+                
+            return head.next
         
-        while len(lists) != 1:
-            list1 = []
+        while len(lists) > 1:
+            curr = []
             for i in range(0, len(lists), 2):
-                list_first = lists[i]
-                list_second = lists[i + 1] if i + 1 < len(lists) else None
-                list1.append(merge(list_first, list_second))
-            lists = list1
-            print(len(lists))
+                if i + 1 != len(lists):
+                    curr.append(merge(lists[i], lists[i + 1]))
+                else:
+                    curr.append(lists[i])
+            lists = curr
         
         return lists[0]
+                
+                
+
+        
