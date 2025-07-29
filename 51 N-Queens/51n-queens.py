@@ -1,38 +1,40 @@
+from copy import copy, deepcopy
+
 class Solution:
     def solveNQueens(self, n: int) -> List[List[str]]:
-        grid = [["."] * n for _ in range(n)]
         cols = set()
-        posDiag = set()
-        negDiag = set()
-        res = []
+        diag = set()
+        rev = set()
 
-        def valid(node):
-            y, x = node
-            if x in cols or y - x in negDiag or y + x in posDiag:
-                return False
-            return True
+        board = [["."] * n for i in range(n)]
 
-        def dfs(i):
-            print(grid, i)
-            for y in range(i, n):
-                bool1 = False
-                for x in range(n):
-                    if grid[y][x] == "." and valid((y, x)):
-                        if valid((y, x)):
-                            grid[y][x] = "Q"
-                            cols.add(x)
-                            posDiag.add(y + x)
-                            negDiag.add(y - x)
-                            dfs(y + 1)
-                            cols.remove(x)
-                            posDiag.remove(y + x)
-                            negDiag.remove(y - x)
-                            grid[y][x] = "."
-                if not bool1:
-                    return False
-            res.append([''.join(row) for row in grid])
+        final = []
+
+        def dfs(ny):
+            if ny == len(board):
+                if len(cols) == len(board):
+                    final.append(deepcopy(board))
+                return len(cols) == len(board)
+
+            for x in range(n):
+                if x not in cols and (ny + x) not in diag and (ny - x) not in rev:
+                    cols.add(x)
+                    diag.add(ny + x)
+                    rev.add(ny - x)
+                    board[ny][x] = "Q"
+                    dfs(ny + 1)
+                    board[ny][x] = "."
+                    cols.remove(x)
+                    diag.remove(ny + x)
+                    rev.remove(ny - x)
+
+            return False
                     
         dfs(0)
 
-        return res
-        
+        for i in range(len(final)):
+            for p in range(len(final[i])):
+                final[i][p] = ''.join(final[i][p])
+
+        return final
+                
