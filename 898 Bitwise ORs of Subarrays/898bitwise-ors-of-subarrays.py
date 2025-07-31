@@ -5,6 +5,7 @@ class Solution:
 
         for x in arr:
             curr = {x} | {x | v for v in curr}
+            
             res |= curr
         
         return len(res)
