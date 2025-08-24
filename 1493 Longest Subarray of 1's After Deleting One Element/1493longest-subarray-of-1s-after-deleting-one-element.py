@@ -23,4 +23,3 @@ class Solution:
                 maxCount = max(count, maxCount)
         
         return maxCount if sum(nums) != len(nums) else len(nums) - 1
-
