@@ -3,37 +3,51 @@ class Solution:
         """
         Do not return anything, modify board in-place instead.
         """
-        def sudokuHelper():
-            for y in range(9):
-                for x in range(9):
-                    if board[y][x] == ".":
-                        for i in range(1, 10):
-                            if isValid((y, x), i):
-                                board[y][x] = str(i)
-                                call = sudokuHelper()
-                                if call:
-                                    return True
-                                board[y][x] = "."
-                        return False
-            return True
 
-        def isValid(node, digit):
-            y, x = node
-            for i in range(9):
-                if str(digit) == board[y][i]:
-                    return False
-                if str(digit) == board[i][x]:
-                    return False
-            
-            rounded_x = 3 * (x // 3) 
-            rounded_y = 3 * (y // 3) 
+        rows = [set() for _ in range(9)]
+        cols = [set() for _ in range(9)]    
+        boxes = [set() for _ in range(9)]  
 
-            for c in range(rounded_x, rounded_x + 3):
-                for d in range(rounded_y, rounded_y + 3):
-                    if board[d][c] == str(digit):
-                        return False
-            return True
-
-        sudokuHelper()
-
+        for r in range(9):
+            for c in range(9):
+                if board[r][c] != '.':
+                    digit = board[r][c]
+                    rows[r].add(digit)
+                    cols[c].add(digit)
+                    boxes[(r // 3) * 3 + c // 3].add(digit)
         
+        def sudoku(board, start, end):
+
+            #print(rows, cols)
+            
+            for y in range(start, len(board)):
+                for x in range(0 if y > start else end, 9):
+                    flag = True
+                    if board[y][x] == ".":
+                        for i in range(9):
+                            box = (y // 3) * 3 + x // 3
+                            if str(i + 1) in rows[y] or str(i + 1) in cols[x] or str(i + 1) in boxes[box]:
+                                continue
+                            flag = False
+                            board[y][x] = str(i + 1)
+                            rows[y].add(board[y][x])
+                            cols[x].add(board[y][x])
+                            boxes[box].add(board[y][x])
+
+                            nexty, nextx = y + (1 if x == 8 else 0), x + (1 if x != 8 else -8) 
+                            returned = sudoku(board, nexty, nextx)
+                            if returned:
+                                return True
+
+                            rows[y].remove(board[y][x])
+                            cols[x].remove(board[y][x])
+                            boxes[box].remove(board[y][x])
+                            board[y][x] = "."
+    
+                        return False
+            
+            return True
+        
+        return sudoku(board, 0, 0)
+
+            
